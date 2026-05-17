@@ -1,7 +1,5 @@
 package org.sjk.pocketwords.ebook.section;
 
-import java.util.List;
-
 /**
  * Represents a section of an e-book.
  *

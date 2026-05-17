@@ -1,6 +1,5 @@
 package org.sjk.pocketwords.ebook.epub.factory;
 
-import org.apache.logging.log4j.core.tools.picocli.CommandLine;
 import org.sjk.pocketwords.ebook.EBook;
 import org.sjk.pocketwords.ebook.epub.parser.EpubParser;
 import org.sjk.pocketwords.ebook.parser.exception.ParsingException;
