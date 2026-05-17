@@ -23,6 +23,7 @@ public final class Printer {
     private Printer() {
     }
 
+    @SuppressWarnings({ "java:S106" })
     public static void print(final List<String> tokens, final Path outputFile) throws IOException {
         try {
             if (outputFile != null) {
