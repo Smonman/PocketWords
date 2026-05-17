@@ -5,6 +5,8 @@ import org.slf4j.LoggerFactory;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
@@ -18,31 +20,29 @@ public final class Printer {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Printer.class);
 
-    private Printer() {}
+    private Printer() {
+    }
 
     public static void print(final List<String> tokens, final Path outputFile) throws IOException {
-        if (outputFile != null) {
-            Printer.printToFile(tokens, outputFile);
-        } else {
-            Printer.printToStdOut(tokens);
-        }
-    }
-
-    private static void printToFile(final List<String> tokens, final Path outputFile) throws IOException {
-        try (final BufferedWriter writer = Files.newBufferedWriter(outputFile)) {
-            for (final String token : tokens) {
-                writer.write(token);
-                writer.write("\n");
+        try {
+            if (outputFile != null) {
+                LOGGER.info("Writing printer output to {}", outputFile);
+                Printer.printToWriter(tokens, Files.newBufferedWriter(outputFile));
+            } else {
+                LOGGER.info("Writing printer output to standard out");
+                Printer.printToWriter(tokens, new OutputStreamWriter(System.out));
             }
         } catch (final IOException e) {
-            LOGGER.error("error while writing to file {}", outputFile, e);
-            throw new IOException(e);
+            throw new IOException("Error while writing output", e);
         }
     }
 
-    private static void printToStdOut(final List<String> tokens) {
-        for (final String token : tokens) {
-            System.out.println(token);
+    private static void printToWriter(final List<String> tokens, final Writer writer) throws IOException {
+        try (final BufferedWriter bufferedWriter = new BufferedWriter(writer)) {
+            for (final String token : tokens) {
+                bufferedWriter.write(token);
+                bufferedWriter.write("\n");
+            }
         }
     }
 }
