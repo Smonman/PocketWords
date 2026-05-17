@@ -2,6 +2,7 @@ package org.sjk.pocketwords.ebook.epub.factory;
 
 import org.sjk.pocketwords.ebook.EBook;
 import org.sjk.pocketwords.ebook.epub.parser.EpubParser;
+import org.sjk.pocketwords.ebook.factory.FactoryCreationException;
 import org.sjk.pocketwords.ebook.parser.exception.ParsingException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,14 +16,13 @@ public class EpubFactory {
     private EpubFactory() {
     }
 
-    public static EBook create(final Path filepath) {
+    public static EBook create(final Path filepath) throws FactoryCreationException {
         try {
             final EpubParser parser = new EpubParser();
             return parser.parse(filepath);
         } catch (final ParsingException e) {
             LOGGER.error("cannot create EBook from {}", filepath, e);
-            // FIXME: could there be a better exception?
-            throw new RuntimeException(e);
+            throw new FactoryCreationException(e);
         }
     }
 }

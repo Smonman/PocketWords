@@ -3,6 +3,7 @@ package org.sjk.pocketwords.core;
 import org.sjk.pocketwords.core.exception.RunException;
 import org.sjk.pocketwords.ebook.EBook;
 import org.sjk.pocketwords.ebook.factory.EBookFactory;
+import org.sjk.pocketwords.ebook.factory.FactoryCreationException;
 import org.sjk.pocketwords.ebook.section.Section;
 import org.sjk.pocketwords.printer.Printer;
 import org.sjk.pocketwords.tokenzier.impl.WhiteSpaceTokenzier;
@@ -39,12 +40,16 @@ public final class Core implements Runnable {
 
     @Override
     public void run() {
-        final EBook eBook = EBookFactory.create(inputFilePath);
-        final String text = eBook.getSections().stream().map(Section::getText).collect(Collectors.joining("\n\n\n"));
-        final List<String> tokens = new WhiteSpaceTokenzier().tokenize(text);
-        // final List<String> filteredTokens = Filterer.filter(tokens, new SingleCharFilter());
         try {
+            final EBook eBook = EBookFactory.create(inputFilePath);
+            final String text =
+                eBook.getSections().stream().map(Section::getText).collect(Collectors.joining("\n\n\n"));
+            final List<String> tokens = new WhiteSpaceTokenzier().tokenize(text);
+            // final List<String> filteredTokens = Filterer.filter(tokens, new SingleCharFilter());
             Printer.print(tokens, outputFilePath);
+        } catch (final FactoryCreationException e) {
+            LOGGER.error("Cannot create e book from input file {}", inputFilePath, e);
+            throw new RunException(e);
         } catch (final IOException e) {
             LOGGER.error("Cannot print result", e);
             throw new RunException(e);
