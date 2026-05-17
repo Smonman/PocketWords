@@ -11,6 +11,8 @@ import org.sjk.pocketwords.core.exception.RunException;
 import org.sjk.pocketwords.core.properties.impl.PropertyReaderImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.Marker;
+import org.slf4j.MarkerFactory;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -19,6 +21,7 @@ import java.util.Properties;
 public final class PocketWords {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PocketWords.class);
+    private static final Marker OUTPUT_MARKER = MarkerFactory.getMarker("OUTPUT");
 
     static void main(final String[] args) {
         LOGGER.info("Starting Pocket Words");
@@ -45,7 +48,7 @@ public final class PocketWords {
             if (line.hasOption("v")) {
                 final String version = properties.getProperty("version");
                 final String buildTimestamp = properties.getProperty("build.timestamp");
-                System.out.printf("%s %s%n", version, buildTimestamp);
+                LOGGER.info(OUTPUT_MARKER, "{} {}", version, buildTimestamp);
                 System.exit(0);
             }
             PocketWords.passArgumentsToCore(line, options);
