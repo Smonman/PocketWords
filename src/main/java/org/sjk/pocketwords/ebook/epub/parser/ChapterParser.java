@@ -34,6 +34,53 @@ public class ChapterParser implements Parser<Chapter, Path> {
     private static final String P_ELEMENT_NAME = "p";
     private static final String TYPE_ATTRIBUTE_NAME = "type";
     private static final String TITLE_ATTRIBUTE_NAME = "title";
+    final ParagraphParser paragraphParser = new ParagraphParser();
+
+    private static void parseChapterTitle(final ChapterImpl.Builder builder, final StartElement startElement) {
+        final Attribute typeAttribute = startElement.getAttributeByName(new QName("", TYPE_ATTRIBUTE_NAME, "epub"));
+        if (typeAttribute != null) {
+            // parse epub:type attribute
+            // see https://www.w3.org/TR/epub-33/#sec-xhtml-structural-semantics
+            final String typeAttributeValue = typeAttribute.getValue();
+            if (typeAttributeValue.equals("chapter")) {
+                final String title = startElement.getAttributeByName(new QName(TITLE_ATTRIBUTE_NAME)).getValue();
+                builder.title(title);
+            }
+        }
+    }
+
+    private void parseBodyElement(final XMLEventReader reader, final ChapterImpl.Builder builder)
+        throws XMLStreamException {
+        final List<Paragraph> paragraphs = new ArrayList<>();
+        while (reader.hasNext()) {
+            final XMLEvent event = reader.nextEvent();
+            if (event.isStartElement()) {
+                final StartElement startElement = event.asStartElement();
+                final String startElementName = startElement.getName().getLocalPart();
+                ChapterParser.parseChapterTitle(builder, startElement);
+                if (startElementName.equals(P_ELEMENT_NAME)) {
+                    this.parseParagraph(reader, paragraphs);
+                }
+            } else if (event.isEndElement()) {
+                final EndElement endElement = event.asEndElement();
+                final String endElementName = endElement.getName().getLocalPart();
+                if (endElementName.equals(BODY_ELEMENT_NAME)) {
+                    // done parsing <body> block
+                    builder.paragraphs(paragraphs);
+                    break;
+                }
+            }
+        }
+    }
+
+    private void parseParagraph(final XMLEventReader reader, final List<Paragraph> paragraphs) {
+        try {
+            final Paragraph paragraph = this.paragraphParser.parse(reader);
+            paragraphs.add(paragraph);
+        } catch (final ParsingException e) {
+            LOGGER.error("cannot parse paragraph, skipping", e);
+        }
+    }
 
     @Override
     public Chapter parse(final Path input) throws ParsingException {
@@ -58,52 +105,13 @@ public class ChapterParser implements Parser<Chapter, Path> {
     }
 
     private void readFile(final XMLEventReader reader, final ChapterImpl.Builder builder) throws XMLStreamException {
-        final ParagraphParser paragraphParser = new ParagraphParser();
-        final List<Paragraph> paragraphs = new ArrayList<>();
-
         while (reader.hasNext()) {
             final XMLEvent event = reader.nextEvent();
             if (event.isStartElement()) {
                 final StartElement startElement = event.asStartElement();
                 final String startElementName = startElement.getName().getLocalPart();
                 if (startElementName.equals(BODY_ELEMENT_NAME)) {
-                    // parse <body> block
-                    while (reader.hasNext()) {
-                        final XMLEvent event2 = reader.nextEvent();
-                        if (event2.isStartElement()) {
-                            final StartElement startElement2 = event2.asStartElement();
-                            final String startElement2Name = startElement2.getName().getLocalPart();
-                            final Attribute typeAttribute =
-                                startElement2.getAttributeByName(new QName("", TYPE_ATTRIBUTE_NAME, "epub"));
-                            if (typeAttribute != null) {
-                                // parse epub:type attribute
-                                // see https://www.w3.org/TR/epub-33/#sec-xhtml-structural-semantics
-                                final String typeAttributeValue = typeAttribute.getValue();
-                                if (typeAttributeValue.equals("chapter")) {
-                                    final String title =
-                                        startElement2.getAttributeByName(new QName(TITLE_ATTRIBUTE_NAME)).getValue();
-                                    builder.title(title);
-                                }
-                            }
-                            if (startElement2Name.equals(P_ELEMENT_NAME)) {
-                                // parse <p> block
-                                try {
-                                    final Paragraph paragraph = paragraphParser.parse(reader);
-                                    paragraphs.add(paragraph);
-                                } catch (final ParsingException e) {
-                                    LOGGER.error("cannot parse paragraph, skipping", e);
-                                }
-                            }
-                        } else if (event2.isEndElement()) {
-                            final EndElement endElement2 = event2.asEndElement();
-                            final String endElement2Name = endElement2.getName().getLocalPart();
-                            if (endElement2Name.equals(BODY_ELEMENT_NAME)) {
-                                // done parsing <body> block
-                                builder.paragraphs(paragraphs);
-                                break;
-                            }
-                        }
-                    }
+                    this.parseBodyElement(reader, builder);
                 }
             }
         }
