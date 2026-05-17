@@ -1,9 +1,10 @@
 package org.sjk.pocketwords.core;
 
+import org.sjk.pocketwords.core.exception.RunException;
 import org.sjk.pocketwords.ebook.EBook;
 import org.sjk.pocketwords.ebook.factory.EBookFactory;
-import org.sjk.pocketwords.printer.Printer;
 import org.sjk.pocketwords.ebook.section.Section;
+import org.sjk.pocketwords.printer.Printer;
 import org.sjk.pocketwords.tokenzier.impl.WhiteSpaceTokenzier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,7 +47,7 @@ public final class Core implements Runnable {
             Printer.print(tokens, outputFilePath);
         } catch (final IOException e) {
             LOGGER.error("Cannot print result", e);
-            throw new RuntimeException(e);
+            throw new RunException(e);
         }
     }
 }

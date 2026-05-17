@@ -7,6 +7,7 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.cli.help.HelpFormatter;
 import org.sjk.pocketwords.core.Core;
+import org.sjk.pocketwords.core.exception.RunException;
 import org.sjk.pocketwords.core.properties.impl.PropertyReaderImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,11 +49,14 @@ public final class PocketWords {
                 System.exit(0);
             }
             PocketWords.passArgumentsToCore(line, options);
+            Core.getInstance().run();
         } catch (final IOException | ParseException e) {
-            LOGGER.error("Unexpected error", e);
+            LOGGER.error("An unexpected error occurred, cannot setup PocketWords, aborting ...", e);
+            System.exit(-1);
+        } catch (final RunException e) {
+            LOGGER.error("An unexpected error occurred, aborting ...", e);
             System.exit(-1);
         }
-        Core.getInstance().run();
     }
 
     private static void passArgumentsToCore(final CommandLine line, final Options options) throws ParseException {
