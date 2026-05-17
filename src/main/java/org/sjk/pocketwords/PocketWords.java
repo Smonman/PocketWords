@@ -7,11 +7,11 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.cli.help.HelpFormatter;
 import org.sjk.pocketwords.core.Core;
+import org.sjk.pocketwords.core.properties.impl.PropertyReaderImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.file.Path;
 import java.util.Properties;
 
@@ -22,16 +22,16 @@ public final class PocketWords {
     static void main(final String[] args) {
         LOGGER.info("Starting Pocket Words");
 
-        final Properties properties = PocketWords.readProperties();
-
-        final Options options = new Options();
-        options.addOption("h", "help", false, "Print this message");
-        options.addOption("i", "input-file", true, "Path to the eBook file");
-        options.addOption("o", "output-file", true, "Path to the output file");
-        options.addOption("v", "version", false, "Print version");
-
-        options.getOption("i").setRequired(true);
         try {
+            final Properties properties = new PropertyReaderImpl().readProperties();
+
+            final Options options = new Options();
+            options.addOption("h", "help", false, "Print this message");
+            options.addOption("i", "input-file", true, "Path to the eBook file");
+            options.addOption("o", "output-file", true, "Path to the output file");
+            options.addOption("v", "version", false, "Print version");
+
+            options.getOption("i").setRequired(true);
             final CommandLineParser parser = new DefaultParser();
             final CommandLine line = parser.parse(options, args);
             if (line.hasOption("h")) {
@@ -53,17 +53,6 @@ public final class PocketWords {
             System.exit(-1);
         }
         Core.getInstance().run();
-    }
-
-    private static Properties readProperties() {
-        final Properties properties = new Properties();
-        try (final InputStream stream = Thread.currentThread().getContextClassLoader().getResourceAsStream("PocketWords.properties")) {
-            properties.load(stream);
-            return properties;
-        } catch (final IOException e) {
-            LOGGER.error("Failed to read properties", e);
-            throw new RuntimeException(e);
-        }
     }
 
     private static void passArgumentsToCore(final CommandLine line, final Options options) throws ParseException {
