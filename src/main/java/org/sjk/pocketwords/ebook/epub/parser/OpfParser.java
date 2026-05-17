@@ -60,6 +60,7 @@ public class OpfParser implements Parser<Opf, Path> {
 
     private XMLEventReader getReader(final Path input) throws FileNotFoundException, XMLStreamException {
         final XMLInputFactory xmlInputFactory = XMLInputFactory.newInstance();
+        xmlInputFactory.setProperty(XMLInputFactory.SUPPORT_DTD, false);
         return xmlInputFactory.createXMLEventReader(new FileInputStream(input.toString()));
     }
 
