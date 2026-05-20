@@ -33,11 +33,13 @@ public class ChapterParser implements Parser<Chapter, Path> {
     private static final String BODY_ELEMENT_NAME = "body";
     private static final String P_ELEMENT_NAME = "p";
     private static final String TYPE_ATTRIBUTE_NAME = "type";
+    private static final String EPUB_NS_URI = "http://www.idpf.org/2007/ops";
     private static final String TITLE_ATTRIBUTE_NAME = "title";
     final ParagraphParser paragraphParser = new ParagraphParser();
 
     private static void parseChapterTitle(final ChapterImpl.Builder builder, final StartElement startElement) {
-        final Attribute typeAttribute = startElement.getAttributeByName(new QName("", TYPE_ATTRIBUTE_NAME, "epub"));
+        final Attribute typeAttribute =
+            startElement.getAttributeByName(new QName(EPUB_NS_URI, TYPE_ATTRIBUTE_NAME));
         if (typeAttribute != null) {
             // parse epub:type attribute
             // see https://www.w3.org/TR/epub-33/#sec-xhtml-structural-semantics
