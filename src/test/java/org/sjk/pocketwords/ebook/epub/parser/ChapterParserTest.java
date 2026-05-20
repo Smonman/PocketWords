@@ -92,4 +92,16 @@ class ChapterParserTest {
 
         Assertions.assertThrows(ParsingException.class, () -> chapterParser.parse(path));
     }
+
+    @Test
+    void parse_invalidParagraphs_skipsParagraph() throws URISyntaxException {
+        final Path path =
+            Path.of(Thread.currentThread()
+                          .getContextClassLoader()
+                          .getResource("ebook/chapters/invalid-paragraph.xhtml")
+                          .toURI());
+        final ChapterParser chapterParser = new ChapterParser();
+
+        Assertions.assertThrows(ParsingException.class, () -> chapterParser.parse(path));
+    }
 }

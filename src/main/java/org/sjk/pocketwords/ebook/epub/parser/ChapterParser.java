@@ -52,7 +52,7 @@ public class ChapterParser implements Parser<Chapter, Path> {
     }
 
     private void parseBodyElement(final XMLEventReader reader, final ChapterImpl.Builder builder)
-        throws XMLStreamException {
+        throws XMLStreamException, ParsingException {
         final List<Paragraph> paragraphs = new ArrayList<>();
         while (reader.hasNext()) {
             final XMLEvent event = reader.nextEvent();
@@ -75,13 +75,9 @@ public class ChapterParser implements Parser<Chapter, Path> {
         }
     }
 
-    private void parseParagraph(final XMLEventReader reader, final List<Paragraph> paragraphs) {
-        try {
-            final Paragraph paragraph = this.paragraphParser.parse(reader);
-            paragraphs.add(paragraph);
-        } catch (final ParsingException e) {
-            LOGGER.error("cannot parse paragraph, skipping", e);
-        }
+    private void parseParagraph(final XMLEventReader reader, final List<Paragraph> paragraphs) throws ParsingException {
+        final Paragraph paragraph = this.paragraphParser.parse(reader);
+        paragraphs.add(paragraph);
     }
 
     @Override
@@ -106,7 +102,8 @@ public class ChapterParser implements Parser<Chapter, Path> {
         return xmlInputFactory.createXMLEventReader(new FileInputStream(input.toString()));
     }
 
-    private void readFile(final XMLEventReader reader, final ChapterImpl.Builder builder) throws XMLStreamException {
+    private void readFile(final XMLEventReader reader, final ChapterImpl.Builder builder)
+        throws XMLStreamException, ParsingException {
         while (reader.hasNext()) {
             final XMLEvent event = reader.nextEvent();
             if (event.isStartElement()) {
