@@ -35,7 +35,7 @@ class ParagraphParserTest {
                          Arguments.of("<p>&amp;</p>", "&"),
                          Arguments.of("<p>Test <em>emph</em></p>", "Test emph"),
                          Arguments.of("<p></p>", ""),
-                         Arguments.of("<p>abc\ndef</p>", "abc\ndef"),
+                         Arguments.of("<p>abc\ndef</p>", "abc def"),
                          Arguments.of("<p class=\"text\">abc</p>", "abc"));
     }
 
