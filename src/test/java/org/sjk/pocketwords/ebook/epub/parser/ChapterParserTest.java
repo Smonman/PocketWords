@@ -104,4 +104,13 @@ class ChapterParserTest {
 
         Assertions.assertThrows(ParsingException.class, () -> chapterParser.parse(path));
     }
+
+    @Test
+    void parse_fileDoesNotExist_throwsIllegalArgumentException() {
+        final ChapterParser chapterParser = new ChapterParser();
+        final Path fantasyFilePath = Path.of("I/do/not/exist.xhtml");
+
+        Assertions.assertThrows(IllegalArgumentException.class,
+                                () -> chapterParser.parse(fantasyFilePath));
+    }
 }
