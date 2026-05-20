@@ -48,7 +48,7 @@ public class ParagraphParser implements Parser<Paragraph, XMLEventReader> {
                 final String endElementName = endElement.getName().getLocalPart();
                 if (endElementName.equals(P_ELEMENT_NAME)) {
                     // done parsing <p> block
-                    builder.text(sb.toString());
+                    builder.text(sb.toString().trim().replaceAll("\\s+", " "));
                     break;
                 }
             }
