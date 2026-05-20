@@ -12,7 +12,7 @@ import java.util.List;
  * A concrete EPUB e-book.
  *
  * @author Simon Josef Kreuzpointner
- * @see <a href="https://www.w3.org/TR/epub-33>EPUB 3.3 W3C Recommendation</a>
+ * @see <a href="https://www.w3.org/TR/epub-33">EPUB 3.3 W3C Recommendation</a>
  */
 public class EpubEBook implements EBook {
 

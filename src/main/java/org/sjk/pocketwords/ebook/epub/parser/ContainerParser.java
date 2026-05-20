@@ -18,7 +18,7 @@ import java.io.FileNotFoundException;
 import java.nio.file.Path;
 
 /**
- * A concrete implementation of {@link Parser<>} for {@link Container}.
+ * A concrete implementation of {@link Parser} for {@link Container}.
  *
  * @author Simon Josef Kreuzpointner
  */
@@ -57,7 +57,8 @@ public class ContainerParser implements Parser<Container, Path> {
                 final StartElement startElement = event.asStartElement();
                 final String startElementName = startElement.getName().getLocalPart();
                 if (startElementName.equals(ROOT_FILE_ELEMENT_NAME)) {
-                    final String fullPathString = startElement.getAttributeByName(new QName(ROOT_FILE_PATH_ATTRIBUTE_NAME)).getValue();
+                    final String fullPathString =
+                        startElement.getAttributeByName(new QName(ROOT_FILE_PATH_ATTRIBUTE_NAME)).getValue();
                     builder.rootFile(Path.of(fullPathString));
                     LOGGER.debug("found root file {}", fullPathString);
                     return;
