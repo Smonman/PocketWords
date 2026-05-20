@@ -20,6 +20,12 @@
         </developer>
     </developers>
 
+    <scm>
+        <connection>scm:git@github.com:Smonman/PocketWords.git</connection>
+        <tag>HEAD</tag>
+        <url>https://github.com/Smonman/PocketWords</url>
+    </scm>
+
     <properties>
         <maven.compiler.source>25</maven.compiler.source>
         <maven.compiler.target>25</maven.compiler.target>
