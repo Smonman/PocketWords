@@ -23,6 +23,15 @@ public final class Printer {
     private Printer() {
     }
 
+    /**
+     * Prints the given tokens to the given output file.
+     *
+     * <p>If the output file path is {@code null}, then {@link System#out} is used as the output target.
+     *
+     * @param tokens     a list of tokens to print
+     * @param outputFile a file to print to, or {@code null} to use {@link System#out}
+     * @throws IOException if an error occurs while printing
+     */
     @SuppressWarnings({ "java:S106" })
     public static void print(final List<String> tokens, final Path outputFile) throws IOException {
         try {
