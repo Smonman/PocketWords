@@ -56,5 +56,13 @@ class PrinterTest {
             Assertions.assertTrue(Files.exists(file));
             Assertions.assertIterableEquals(tokens, Files.readAllLines(file));
         }
+
+        @Test
+        void print_withFilePath_fileDoesNotExists_throwsIoException() {
+            final Path file = Path.of("I/dont/exist.txt");
+            final List<String> tokens = List.of();
+
+            Assertions.assertThrows(IOException.class, () -> Printer.print(tokens, file));
+        }
     }
 }
