@@ -62,10 +62,10 @@ public final class PocketWords {
         }
     }
 
-    private static void passArgumentsToCore(final CommandLine line, final Options options) throws ParseException {
+    private static void passArgumentsToCore(final CommandLine line, final Options options) {
         final Path inputFilePath = Path.of(line.getOptionValue(options.getOption("i")));
         Core.getInstance().setInputFilePath(inputFilePath);
-        final Path outputFilePath = line.getParsedOptionValue(options.getOption("o"));
+        final Path outputFilePath = Path.of(line.getOptionValue(options.getOption("o")));
         Core.getInstance().setOutputFilePath(outputFilePath);
     }
 }
