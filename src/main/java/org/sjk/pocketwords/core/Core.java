@@ -6,12 +6,14 @@ import org.sjk.pocketwords.ebook.factory.EBookFactory;
 import org.sjk.pocketwords.ebook.factory.FactoryCreationException;
 import org.sjk.pocketwords.ebook.section.Section;
 import org.sjk.pocketwords.printer.Printer;
+import org.sjk.pocketwords.sanitizer.impl.AsciiSanitizer;
 import org.sjk.pocketwords.tokenzier.impl.WhiteSpaceTokenzier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.nio.file.Path;
+import java.text.Normalizer;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -44,8 +46,9 @@ public final class Core implements Runnable {
             final EBook eBook = EBookFactory.create(inputFilePath);
             final String text =
                 eBook.getSections().stream().map(Section::getText).collect(Collectors.joining("\n\n\n"));
-            final List<String> tokens = new WhiteSpaceTokenzier().tokenize(text);
-            // final List<String> filteredTokens = Filterer.filter(tokens, new SingleCharFilter());
+            final String normalizedText = Normalizer.normalize(text, Normalizer.Form.NFD);
+            final String sanitizedText = new AsciiSanitizer().sanitize(normalizedText);
+            final List<String> tokens = new WhiteSpaceTokenzier().tokenize(sanitizedText);
             Printer.print(tokens, outputFilePath);
         } catch (final FactoryCreationException e) {
             LOGGER.error("Cannot create e book from input file {}", inputFilePath, e);
