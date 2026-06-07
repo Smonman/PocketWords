@@ -5,7 +5,8 @@ import org.sjk.pocketwords.sanitizer.Sanitizer;
 /**
  * A concrete implementation of {@link Sanitizer}.
  *
- * <p>This sanitizer removes any non-ASCII characters from the input string.
+ * <p>This sanitizer removes any non-ASCII characters from the input string. This sanitizer also removes ASCII
+ * characters from the extended character set. (ASCII code > 127)
  *
  * @author Simon Josef Kreuzpointner
  */
