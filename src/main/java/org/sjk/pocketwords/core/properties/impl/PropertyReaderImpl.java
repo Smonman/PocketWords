@@ -4,6 +4,7 @@ import org.sjk.pocketwords.core.properties.PropertyReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
@@ -29,6 +30,9 @@ public class PropertyReaderImpl implements PropertyReader {
         try (final InputStream stream = Thread.currentThread()
                                               .getContextClassLoader()
                                               .getResourceAsStream(filename)) {
+            if (stream == null) {
+                throw new FileNotFoundException(filename);
+            }
             final Properties properties = new Properties();
             properties.load(stream);
             return properties;
