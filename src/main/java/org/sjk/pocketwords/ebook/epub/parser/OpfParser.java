@@ -11,6 +11,7 @@ import javax.xml.namespace.QName;
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.events.Attribute;
 import javax.xml.stream.events.EndElement;
 import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
@@ -21,6 +22,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * A concrete implementation of {@link Parser} for {@link Opf}.
@@ -41,6 +43,7 @@ public class OpfParser implements Parser<Opf, Path> {
     private static final String SPINE_ELEMENT_NAME = "spine";
     private static final String ITEM_REF_ELEMENT_NAME = "itemref";
     private static final String ID_REF_ATTRIBUTE_NAME = "idref";
+    private static final String LINEAR_ATTRIBUTE_NAME = "linear";
 
     private static void parseMetadataElement(final XMLEventReader reader, final OpfImpl.Builder builder)
         throws XMLStreamException {
@@ -89,8 +92,13 @@ public class OpfParser implements Parser<Opf, Path> {
                 if (startElementName.equals(ITEM_REF_ELEMENT_NAME)) {
                     // parse <itemref> element
                     final String idRef = startElement.getAttributeByName(new QName(ID_REF_ATTRIBUTE_NAME)).getValue();
-                    // FIXME: quick and dirty fix to only get text chapter entries
-                    if (idRef.startsWith("id-")) {
+                    // Ignore non-primary entries
+                    // https://idpf.org/epub/30/spec/epub30-publications.html#sec-itemref-elem
+                    final String linear =
+                        Optional.ofNullable(startElement.getAttributeByName(new QName(LINEAR_ATTRIBUTE_NAME)))
+                                .map(Attribute::getValue)
+                                .orElse("yes");
+                    if (linear.equals("yes")) {
                         chapters.add(items.get(idRef));
                     }
                 }
